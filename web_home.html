@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Drive Booking | Car's4u</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* Reset and base */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body, html {
+      font-family: 'Poppins', sans-serif;
+      height: 100%;
+      background: linear-gradient(rgba(42,42,42,0.85), rgba(42,42,42,0.85)),
+                  url('https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg?auto=compress&cs=tinysrgb&h=800') no-repeat center center/cover;
+      color: #e0e0e0;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    ul {
+      list-style: none;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 260px;
+      height: 100vh;
+      background-color: #2f2f2f;
+      padding-top: 70px;
+      box-shadow: 4px 0 12px rgba(0,0,0,0.7);
+      transition: transform 0.3s ease;
+      z-index: 1200;
+      user-select: none;
+    }
+    .sidebar.closed {
+      transform: translateX(-260px);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+    .sidebar .logo {
+      position: fixed;
+      top: 15px;
+      left: 0;
+      width: 260px;
+      font-size: 32px;
+      font-weight: 700;
+      color: #ff7200;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      letter-spacing: 2px;
+      padding: 12px 0;
+      background: #1f1f1f;
+      box-shadow: 0 3px 10px rgba(255,114,0,0.4);
+      transition: color 0.3s ease;
+      z-index: 1300;
+    }
+    .sidebar .logo:hover {
+      color: #ffa040;
+      text-shadow: 0 0 8px #ff7200;
+    }
+
+    .sidebar ul li {
+      margin: 20px 0;
+    }
+    .sidebar ul li a {
+      display: flex;
+      align-items: center;
+      padding: 14px 35px;
+      font-size: 18px;
+      color: #ddd;
+      border-radius: 6px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .sidebar ul li a i {
+      margin-right: 12px;
+      font-size: 20px;
+      color: #ff7200;
+      transition: color 0.3s ease;
+      width: 25px;
+      text-align: center;
+    }
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+      background-color: #ff7200;
+      color: #2a2a2a;
+      box-shadow: 0 0 10px #ff7200;
+    }
+    .sidebar ul li a:hover i,
+    .sidebar ul li a.active i {
+      color: #2a2a2a;
+    }
+
+    /* Toggle Button */
+    .toggle-btn {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      font-size: 26px;
+      color: #ff7200;
+      background-color: #2f2f2f;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 1400;
+      box-shadow: 0 0 10px #ff7200aa;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      user-select: none;
+    }
+    .toggle-btn:hover {
+      background-color: #3f3f3f;
+      transform: scale(1.1);
+    }
+    .toggle-btn:focus {
+      outline: none;
+    }
+
+    /* Main Content */
+    .main {
+      margin-left: 260px;
+      padding: 70px 40px 40px 40px;
+      transition: margin-left 0.3s ease;
+      min-height: 100vh;
+      user-select: none;
+    }
+    .main.sidebar-closed {
+      margin-left: 0;
+      padding-top: 80px;
+    }
+
+    /* Heading */
+    h1 {
+      font-size: 36px;
+      text-align: center;
+      color: #ff7200;
+      margin-bottom: 40px;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 8px #ff7200aa;
+    }
+
+    /* Form container */
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: rgba(56, 56, 56, 0.9);
+      padding: 35px 40px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #ddd;
+      margin-bottom: 8px;
+      font-size: 16px;
+      letter-spacing: 0.03em;
+      user-select: text;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    input[type="datetime-local"] {
+      width: 100%;
+      padding: 14px 15px;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      border: none;
+      background-color: #444;
+      color: #eee;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+      box-shadow: inset 0 0 5px #222;
+      user-select: text;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    select:focus,
+    input[type="datetime-local"]:focus {
+      background-color: #555;
+      outline: none;
+      box-shadow: 0 0 8px #ff7200;
+      color: #fff;
+    }
+
+    /* Submit button */
+    button[type="submit"] {
+      width: 100%;
+      padding: 16px 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #2a2a2a;
+      background: linear-gradient(90deg, #ff7200, #ffa040);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 15px rgba(255,114,0,0.7);
+      user-select: none;
+    }
+    button[type="submit"]:hover {
+      box-shadow: 0 6px 25px rgba(255,114,0,1);
+      transform: scale(1.05);
+      color: #fff;
+      background: linear-gradient(90deg, #ffa040, #ff7200);
+    }
+    button[type="submit"]:focus {
+      outline: none;
+    }
+
+    /* Success message */
+    #successMessage {
+      margin-top: 25px;
+      text-align: center;
+      font-weight: 700;
+      color: #4BB543;
+      font-size: 18px;
+      display: none;
+      user-select: text;
+      animation: fadeInOut 4s ease forwards;
+    }
+    @keyframes fadeInOut {
+      0% {opacity: 0;}
+      10% {opacity: 1;}
+      90% {opacity: 1;}
+      100% {opacity: 0;}
+    }
+
+    /* Logout link */
+    .logout {
+      position: fixed;
+      top: 18px;
+      right: 30px;
+      z-index: 1400;
+      user-select: none;
+    }
+    .logout a {
+      display: inline-block;
+      background-color: rgba(56,56,56,0.85);
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 700;
+      color: #e0e0e0;
+      box-shadow: 0 0 8px #ff7200aa;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .logout a:hover {
+      background-color: #ff7200;
+      color: #2a2a2a;
+      box-shadow: 0 0 12px #ff7200ee;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-260px);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main {
+        margin-left: 0 !important;
+        padding-top: 90px;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      .form-container {
+        width: 100%;
+        padding: 25px 20px;
+      }
+      .toggle-btn {
+        display: block;
+      }
+      .sidebar .logo {
+        width: 220px;
+        left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <nav id="sidebar" class="sidebar open" aria-label="Sidebar Navigation">
+    <h2 class="logo" tabindex="0">:) Car's4u</h2>
+    <ul>
+      <li><a href="Web.html"><i class="fa-solid fa-house"></i> HOME</a></li>
+      <li><a href="About.html"><i class="fa-solid fa-address-card"></i> ABOUT</a></li>
+      <li><a href="car-list.html"><i class="fa-solid fa-car-rear"></i> CARS</a></li>
+      <li><a href="contact.html"><i class="fa-solid fa-address-book"></i> CONTACT</a></li>
+      <li><a href="testdrive.html" class="active"><i class="fa-solid fa-car-on"></i> TEST DRIVE</a></li>
+    </ul>
+  </nav>
+
+  <!-- Toggle Button -->
+  <button id="toggle-btn" class="toggle-btn" aria-label="Toggle Sidebar">&#9776;</button>
+
+  <!-- Logout -->
+  <div class="logout">
+    <a href="login.html" aria-label="Logout">Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <main id="main" class="main" tabindex="-1">
+    <section class="form-container" aria-labelledby="formTitle">
+      <h1 id="formTitle">Book a Test Drive</h1>
+      <form id="testDriveForm" novalidate>
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" placeholder="Your full name" required autocomplete="name" />
+
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" placeholder="+1 234 567 890" required autocomplete="tel" pattern="^\+?[0-9\s\-]{7,15}$" />
+
+        <label for="car">Select Car Model:</label>
+        <select id="car" name="car" required>
+          <option value="" disabled selected>-- Select a model --</option>
+          <option value="BMW Series">BMW Series</option>
+          <option value="Dodge Series">Dodge Series</option>
+          <option value="Mercedes Showroom">Mercedes Showroom</option>
+        </select>
+
+        <label for="datetime">Preferred Date & Time:</label>
+        <input type="datetime-local" id="datetime" name="datetime" required />
+
+        <button type="submit">Book Test Drive</button>
+      </form>
+      <p id="successMessage" role="alert" aria-live="polite">✅ Your test drive has been booked!</p>
+    </section>
+  </main>
+
+  <script>
+    // Sidebar toggle functionality
+    const toggleBtn = document.getElementById('toggle-btn');
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      sidebar.classList.toggle('closed');
+      main.classList.toggle('sidebar-closed');
+      toggleBtn.setAttribute('aria-expanded', sidebar.classList.contains('open'));
+    });
+
+    // On load & resize: show/hide sidebar depending on width
+    function handleResponsiveSidebar() {
+      if (window.innerWidth <= 768) {
+        sidebar.classList.add('closed');
+        sidebar.classList.remove('open');
+        main.classList.add('sidebar-closed');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        sidebar.classList.remove('closed');
+        sidebar.classList.add('open');
+        main.classList.remove('sidebar-closed');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+      }
+    }
+    window.addEventListener('resize', handleResponsiveSidebar);
+    window.addEventListener('load', handleResponsiveSidebar);
+
+    // Form submission with validation and success message
+    const form = document.getElementById('testDriveForm');
+    const successMessage = document.getElementById('successMessage');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Simple validation check (browser handles most due to "required")
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      // Show success message
+      successMessage.style.display = 'block';
+
+      // Reset form
+      form.reset();
+
+      // Hide message after 4 seconds
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 4000);
+
+      // Move focus to success message for screen readers
+      successMessage.focus();
+    });
+  </script>
+
+</body>
+</html>
